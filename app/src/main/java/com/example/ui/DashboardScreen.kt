@@ -43,7 +43,8 @@ fun DashboardScreen(
     onNavigateToHistory: () -> Unit,
     onNavigateToAdd: () -> Unit,
     onNavigateToEdit: (Int) -> Unit,
-    onNavigateToPaywall: () -> Unit
+    onNavigateToPaywall: () -> Unit,
+    onNavigateToGuide: () -> Unit
 ) {
     val context = LocalContext.current
     val db = remember { AppDatabase.getDatabase(context) }
@@ -185,6 +186,20 @@ fun DashboardScreen(
                         Icon(
                             imageVector = Icons.Default.Settings,
                             contentDescription = "Setting Options",
+                            tint = primaryColor
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(4.dp))
+                    IconButton(
+                        onClick = onNavigateToGuide,
+                        modifier = Modifier
+                            .size(44.dp)
+                            .clip(CircleShape)
+                            .background(if (highContrastPref) Color.LightGray else Color.White)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.HelpOutline,
+                            contentDescription = "Show Caregiver User Manual",
                             tint = primaryColor
                         )
                     }
@@ -557,6 +572,59 @@ fun DashboardScreen(
                                 lineHeight = 13.sp
                             )
                         }
+                    }
+                }
+            }
+
+            item {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onNavigateToGuide() },
+                    colors = CardDefaults.cardColors(containerColor = bentoPurple.copy(alpha = 0.08f)),
+                    shape = RoundedCornerShape(20.dp),
+                    border = BorderStroke(1.dp, bentoPurple.copy(alpha = 0.2f))
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(CircleShape)
+                                .background(bentoPurple.copy(alpha = 0.15f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Lightbulb,
+                                contentDescription = "Help Guide",
+                                tint = bentoPurple,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "How to use Connected Chains? 💡",
+                                fontSize = scaleFont(13).sp,
+                                fontWeight = FontWeight.Bold,
+                                color = bentoDarkText
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = "Learn how to chain multi-step medical alerts & explore real caregiver scenarios.",
+                                fontSize = scaleFont(11).sp,
+                                color = Color.Gray,
+                                lineHeight = 14.sp
+                            )
+                        }
+                        Icon(
+                            imageVector = Icons.Default.ChevronRight,
+                            contentDescription = "Open Guide",
+                            tint = bentoPurple,
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
                 }
             }

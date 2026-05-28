@@ -1,6 +1,7 @@
 package com.example.ui
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -32,7 +33,8 @@ fun ManualSetupScreen(
     editingReminderId: Int?, // if null, in Add Mode. If not null, in Edit Mode.
     textSizePref: String,
     highContrastPref: Boolean,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onNavigateToGuide: () -> Unit
 ) {
     val context = LocalContext.current
     val db = remember { AppDatabase.getDatabase(context) }
@@ -71,6 +73,8 @@ fun ManualSetupScreen(
     var anchorExpanded by remember { mutableStateOf(false) }
     var directionExpanded by remember { mutableStateOf(false) }
     var parentExpanded by remember { mutableStateOf(false) }
+
+    var showQuickSetupHelp by remember { mutableStateOf(false) }
 
     fun scaleFont(baseSp: Int): Float {
         return when (textSizePref) {
@@ -114,10 +118,88 @@ fun ManualSetupScreen(
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = if (highContrastPref) Color.Black else Color(0xFF6750A4))
                     }
                 },
+                actions = {
+                    IconButton(onClick = { showQuickSetupHelp = true }) {
+                        Icon(
+                            imageVector = Icons.Default.HelpOutline,
+                            contentDescription = "Quick Help Guide",
+                            tint = if (highContrastPref) Color.Black else Color(0xFF6750A4)
+                        )
+                    }
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = if (highContrastPref) Color.White else Color(0xFFFDF8F6))
             )
         }
     ) { innerPadding ->
+        if (showQuickSetupHelp) {
+            AlertDialog(
+                onDismissRequest = { showQuickSetupHelp = false },
+                title = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Icon(Icons.Default.Help, contentDescription = null, tint = primaryColor)
+                        Text(
+                            text = "Parameter Quick Decoder",
+                            fontSize = scaleFont(16).sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                },
+                text = {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.verticalScroll(rememberScrollState())
+                    ) {
+                        Text(
+                            text = "Don't know what values to choose? Here is a simple reference table:",
+                            fontSize = scaleFont(12).sp,
+                            color = Color.DarkGray
+                        )
+                        
+                        val decoderTips = listOf(
+                            "Name / Dose" to "Medication or task details. e.g. Metformin 500mg.",
+                            "Starting Step?" to "YES for an independent step; NO if this starts automatically AFTER another step completes.",
+                            "Prerequisite Step" to "The precursor task. Choose which existing task must complete first.",
+                            "Base Meal Anchor" to "Relative to Breakfast, Lunch, or Dinner etc., or Fixed Static Time.",
+                            "Offset / Timing" to "Before/After the base time. e.g. 30 Minutes After Parent step completes."
+                        )
+                        
+                        decoderTips.forEach { (field, info) ->
+                            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                Text(field, fontSize = scaleFont(11).sp, fontWeight = FontWeight.Bold, color = primaryColor)
+                                Text(info, fontSize = scaleFont(10).sp, color = Color.Gray, lineHeight = 13.sp)
+                            }
+                        }
+                    }
+                },
+                confirmButton = {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                showQuickSetupHelp = false
+                                onNavigateToGuide()
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(containerColor = primaryColor)
+                        ) {
+                            Text("Open Full Visual Manual", fontSize = scaleFont(12).sp)
+                        }
+                        TextButton(
+                            onClick = { showQuickSetupHelp = false },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Dismiss Guide", fontSize = scaleFont(12).sp)
+                        }
+                    }
+                }
+            )
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -128,6 +210,42 @@ fun ManualSetupScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // Form Help Tip Badge
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { showQuickSetupHelp = true },
+                colors = CardDefaults.cardColors(containerColor = primaryColor.copy(alpha = 0.06f)),
+                shape = RoundedCornerShape(12.dp),
+                border = BorderStroke(1.dp, primaryColor.copy(alpha = 0.2f))
+            ) {
+                Row(
+                    modifier = Modifier.padding(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Info, 
+                        contentDescription = "Quick Help", 
+                        tint = primaryColor,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Text(
+                        text = "Confused about fields or how to chain? Tap here for a quick decoder.",
+                        fontSize = scaleFont(11).sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.Black.copy(alpha = 0.8f),
+                        modifier = Modifier.weight(1f)
+                    )
+                    Icon(
+                        imageVector = Icons.Default.ChevronRight,
+                        contentDescription = null,
+                        tint = primaryColor,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+
             // Field 1: Name
             Text("What should we remind you about?", fontSize = scaleFont(14).sp, fontWeight = FontWeight.Bold, color = primaryColor)
             OutlinedTextField(

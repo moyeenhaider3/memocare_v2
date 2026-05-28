@@ -27,6 +27,7 @@ import com.example.ui.OnboardingScreen
 import com.example.ui.SettingsScreen
 import com.example.ui.TemplateLibraryScreen
 import com.example.ui.PremiumPaywallScreen
+import com.example.ui.MemoCareGuideScreen
 import com.example.ui.theme.MyApplicationTheme
 
 class MainActivity : ComponentActivity() {
@@ -126,7 +127,8 @@ class MainActivity : ComponentActivity() {
                                 onNavigateToHistory = { navController.navigate("history") },
                                 onNavigateToAdd = { navController.navigate("manual_setup") },
                                 onNavigateToEdit = { id -> navController.navigate("manual_setup?editingId=$id") },
-                                onNavigateToPaywall = { navController.navigate("paywall") }
+                                onNavigateToPaywall = { navController.navigate("paywall") },
+                                onNavigateToGuide = { navController.navigate("user_guide") }
                             )
                         }
 
@@ -145,7 +147,8 @@ class MainActivity : ComponentActivity() {
                                 editingReminderId = editingId,
                                 textSizePref = textSizeState,
                                 highContrastPref = highContrastState,
-                                onNavigateBack = { navController.popBackStack() }
+                                onNavigateBack = { navController.popBackStack() },
+                                onNavigateToGuide = { navController.navigate("user_guide") }
                             )
                         }
 
@@ -189,6 +192,15 @@ class MainActivity : ComponentActivity() {
                         composable("paywall") {
                             PremiumPaywallScreen(
                                 onBack = { navController.popBackStack() }
+                            )
+                        }
+
+                        // 8. Caregiver & Setup User Manual
+                        composable("user_guide") {
+                            MemoCareGuideScreen(
+                                textSizePref = textSizeState,
+                                highContrastPref = highContrastState,
+                                onNavigateBack = { navController.popBackStack() }
                             )
                         }
                     }
