@@ -129,6 +129,97 @@ fun ManualSetupScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = if (highContrastPref) Color.White else Color(0xFFFDF8F6))
             )
+        },
+        bottomBar = {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                tonalElevation = 8.dp,
+                shadowElevation = 8.dp,
+                color = if (highContrastPref) Color.White else Color(0xFFFDF8F6),
+                border = if (highContrastPref) BorderStroke(1.dp, Color.Black) else null
+            ) {
+                Row(
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .padding(horizontal = 16.dp, vertical = 12.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedButton(
+                        onClick = onNavigateBack,
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(50.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        border = if (highContrastPref) BorderStroke(2.dp, Color.Black) else BorderStroke(1.dp, Color.Gray),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = if (highContrastPref) Color.Black else Color.DarkGray
+                        )
+                    ) {
+                        Text(
+                            text = "Cancel",
+                            fontSize = scaleFont(14).sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Button(
+                        onClick = {
+                            if (name.isBlank()) {
+                                Toast.makeText(context, "Please write a name first.", Toast.LENGTH_SHORT).show()
+                                return@Button
+                            }
+                            if (anchorEvent == "None" && !anchorTime.contains(":")) {
+                                Toast.makeText(context, "Verify static time matches HH:mm format.", Toast.LENGTH_SHORT).show()
+                                return@Button
+                            }
+
+                            val offset = offsetMinutes.toIntOrNull() ?: 0
+
+                            val reminder = Reminder(
+                                id = editingReminderId ?: 0,
+                                name = name,
+                                type = type,
+                                anchorEvent = anchorEvent,
+                                anchorTime = anchorTime,
+                                offsetMinutes = offset,
+                                direction = direction,
+                                notes = notes,
+                                parentId = if (isChainStart) null else parentId,
+                                isChainStart = isChainStart
+                            )
+
+                            CoroutineScope(Dispatchers.IO).launch {
+                                if (editingReminderId == null) {
+                                    repo.insertReminder(reminder)
+                                } else {
+                                    repo.updateReminder(reminder)
+                                }
+                                
+                                launch(Dispatchers.Main) {
+                                    Toast.makeText(context, "Reminder synced successfully!", Toast.LENGTH_SHORT).show()
+                                    onNavigateBack()
+                                }
+                            }
+                        },
+                        modifier = Modifier
+                            .weight(1.5f)
+                            .height(50.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (highContrastPref) Color.Black else Color(0xFF27AE60),
+                            contentColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Text(
+                            if (editingReminderId == null) "SAVE LINK" else "UPDATE LINK",
+                            fontSize = scaleFont(14).sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
         }
     ) { innerPadding ->
         if (showQuickSetupHelp) {
@@ -205,7 +296,6 @@ fun ManualSetupScreen(
                 .fillMaxSize()
                 .background(if (highContrastPref) Color.White else Color(0xFFFDF8F6))
                 .padding(innerPadding)
-                .navigationBarsPadding()
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -481,63 +571,7 @@ fun ManualSetupScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Action button
-            Button(
-                onClick = {
-                    if (name.isBlank()) {
-                        Toast.makeText(context, "Please write a name first.", Toast.LENGTH_SHORT).show()
-                        return@Button
-                    }
-                    if (anchorEvent == "None" && !anchorTime.contains(":")) {
-                        Toast.makeText(context, "Verify static time matches HH:mm format.", Toast.LENGTH_SHORT).show()
-                        return@Button
-                    }
-
-                    val offset = offsetMinutes.toIntOrNull() ?: 0
-
-                    val reminder = Reminder(
-                        id = editingReminderId ?: 0,
-                        name = name,
-                        type = type,
-                        anchorEvent = anchorEvent,
-                        anchorTime = anchorTime,
-                        offsetMinutes = offset,
-                        direction = direction,
-                        notes = notes,
-                        parentId = if (isChainStart) null else parentId,
-                        isChainStart = isChainStart
-                    )
-
-                    CoroutineScope(Dispatchers.IO).launch {
-                        if (editingReminderId == null) {
-                            repo.insertReminder(reminder)
-                        } else {
-                            repo.updateReminder(reminder)
-                        }
-                        
-                        launch(Dispatchers.Main) {
-                            Toast.makeText(context, "Reminder synced successfully!", Toast.LENGTH_SHORT).show()
-                            onNavigateBack()
-                        }
-                    }
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF27AE60)),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(
-                    if (editingReminderId == null) "SAVE AND ALIGN LINK" else "UPDATE ALIGNED LINK",
-                    fontSize = scaleFont(15).sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(40.dp))
         }
     }
 }

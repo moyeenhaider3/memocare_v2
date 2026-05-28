@@ -88,6 +88,8 @@ roborazzi-junit-rule = { group = "io.github.takahirom.roborazzi", name = "robora
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-ai = { group = "com.google.firebase", name = "firebase-ai" }
 play-billing-ktx = { group = "com.android.billingclient", name = "billing-ktx", version = "7.1.1" }
+play-app-update = { group = "com.google.android.play", name = "app-update", version = "2.1.0" }
+play-app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version = "2.1.0" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

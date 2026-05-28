@@ -32,6 +32,8 @@ import com.example.ui.theme.MyApplicationTheme
 
 class MainActivity : ComponentActivity() {
 
+    private val UPDATE_REQUEST_CODE = 9991
+
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
@@ -42,10 +44,55 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun checkForInAppUpdates() {
+        try {
+            val appUpdateManager = com.google.android.play.core.appupdate.AppUpdateManagerFactory.create(this)
+            val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+            appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+                if (appUpdateInfo.updateAvailability() == com.google.android.play.core.install.model.UpdateAvailability.UPDATE_AVAILABLE
+                    && appUpdateInfo.isUpdateTypeAllowed(com.google.android.play.core.install.model.AppUpdateType.IMMEDIATE)
+                ) {
+                    try {
+                        appUpdateManager.startUpdateFlowForResult(
+                            appUpdateInfo,
+                            com.google.android.play.core.install.model.AppUpdateType.IMMEDIATE,
+                            this,
+                            UPDATE_REQUEST_CODE
+                        )
+                    } catch (e: Exception) {
+                        Log.e("MainActivity", "Failed to start immediate update flow", e)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("MainActivity", "In-app update capability is missing or failed to initialize", e)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        try {
+            val appUpdateManager = com.google.android.play.core.appupdate.AppUpdateManagerFactory.create(this)
+            appUpdateManager.appUpdateInfo.addOnSuccessListener { appUpdateInfo ->
+                if (appUpdateInfo.updateAvailability() == com.google.android.play.core.install.model.UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+                    appUpdateManager.startUpdateFlowForResult(
+                        appUpdateInfo,
+                        com.google.android.play.core.install.model.AppUpdateType.IMMEDIATE,
+                        this,
+                        UPDATE_REQUEST_CODE
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("MainActivity", "Error in onResume app update check", e)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
         enableEdgeToEdge()
+        checkForInAppUpdates()
 
         // Ask for runtime notification permission on Android 13+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
