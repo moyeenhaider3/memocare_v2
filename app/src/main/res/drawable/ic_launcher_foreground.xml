@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Left interlinked circle (Navy Blue) -->
+    <path
+        android:pathData="M 42, 33 A 21 21 0 1 0 42, 75 A 21 21 0 1 0 42, 33"
+        android:strokeWidth="5"
+        android:strokeColor="#0B2240"
+        android:fillColor="#00000000" />
+
+    <!-- Right interlinked circle (Medical Green) -->
+    <path
+        android:pathData="M 66, 33 A 21 21 0 1 0 66, 75 A 21 21 0 1 0 66, 33"
+        android:strokeWidth="5"
+        android:strokeColor="#1E9E49"
+        android:fillColor="#00000000" />
+
+    <!-- Stylized Left M Inside Left Circle (Navy Blue) -->
+    <path
+        android:pathData="M 28, 64 L 28, 44 L 35, 53 L 42, 44 L 42, 64"
+        android:strokeWidth="4"
+        android:strokeColor="#0B2240"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000" />
+
+    <!-- Stylized Right M Inside Right Circle (Medical Green) -->
+    <path
+        android:pathData="M 66, 64 L 66, 44 L 73, 53 L 80, 44 L 80, 64"
+        android:strokeWidth="4"
+        android:strokeColor="#1E9E49"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000" />
+
+    <!-- Central Clock Ring in the overlap zone (Navy/Green blending - let's make it Navy) -->
+    <path
+        android:pathData="M 54, 43 A 11 11 0 1 0 54, 65 A 11 11 0 1 0 54, 43"
+        android:strokeWidth="3.5"
+        android:strokeColor="#0B2240"
+        android:fillColor="#00000000" />
+
+    <!-- Clock center point -->
+    <path
+        android:pathData="M 54,54 L 54,54"
+        android:strokeWidth="3.5"
+        android:strokeColor="#0B2240"
+        android:strokeLineCap="round" />
+
+    <!-- Clock hands: ~1:55/2:50 as in the logo -->
+    <!-- Hour Hand -->
+    <path
+        android:pathData="M 54, 54 L 54, 48"
+        android:strokeWidth="2.8"
+        android:strokeColor="#0B2240"
+        android:strokeLineCap="round" />
+
+    <!-- Minute Hand -->
+    <path
+        android:pathData="M 54, 54 L 59, 58"
+        android:strokeWidth="2.4"
+        android:strokeColor="#0B2240"
+        android:strokeLineCap="round" />
+
+    <!-- Ticks (12, 6, 9, 3 o'clock) -->
+    <path
+        android:pathData="M 54, 43 L 54, 46"
+        android:strokeWidth="1.8"
+        android:strokeColor="#0B2240"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M 54, 65 L 54, 62"
+        android:strokeWidth="1.8"
+        android:strokeColor="#0B2240"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M 43, 54 L 46, 54"
+        android:strokeWidth="1.8"
+        android:strokeColor="#0B2240"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M 65, 54 L 62, 54"
+        android:strokeWidth="1.8"
+        android:strokeColor="#0B2240"
+        android:strokeLineCap="round" />
+
+</vector>
