@@ -20,6 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.data.AppDatabase
 import com.example.data.ConfirmationLog
 import com.example.data.ReminderRepository
+import com.example.util.PdfGenerator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -51,31 +52,13 @@ fun HistoryScreen(
         }
     }
 
-    // Export Logs helper using native sharing sheet (CSV format)
+    // Export Logs helper as beautiful PDF Report
     fun exportLogs(logs: List<ConfirmationLog>) {
         if (logs.isEmpty()) {
             android.widget.Toast.makeText(context, "No logs to export", android.widget.Toast.LENGTH_SHORT).show()
             return
         }
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        val csvBuilder = StringBuilder()
-        csvBuilder.append("Reminder Name,Action,Timestamp\n")
-        logs.forEach { log ->
-            val logTime = sdf.format(Date(log.actionedAt))
-            val nameEscaped = log.reminderName.replace("\"", "\"\"")
-            csvBuilder.append("\"$nameEscaped\",${log.action},\"$logTime\"\n")
-        }
-        
-        val sendIntent = android.content.Intent().apply {
-            action = android.content.Intent.ACTION_SEND
-            putExtra(android.content.Intent.EXTRA_TITLE, "My MemoCare Compliance Logs")
-            putExtra(android.content.Intent.EXTRA_SUBJECT, "MemoCare Compliance Logs Export")
-            putExtra(android.content.Intent.EXTRA_TEXT, csvBuilder.toString())
-            type = "text/csv"
-        }
-        
-        val shareIntent = android.content.Intent.createChooser(sendIntent, "Export Compliance History")
-        context.startActivity(shareIntent)
+        PdfGenerator.generateAndSharePdf(context, logs)
     }
 
     // Confirmation AlertDialog with 3 options: Cancel, Export, and Permanent Clear

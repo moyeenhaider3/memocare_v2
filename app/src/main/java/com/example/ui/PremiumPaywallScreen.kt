@@ -296,7 +296,7 @@ fun PremiumPaywallScreen(
                     InstructionStep(
                         step = "2",
                         title = "Enjoy Care Integration",
-                        desc = "All gold level features (unlimited sequences, absolute overlay takeovers, logging sync) will instantly unlock. Test them fully without limits.",
+                        desc = "All gold level features (unlimited steps in order, reliable full-screen alerts, complete history logs) will instantly unlock. Test them fully without limits.",
                         textColor = textColor,
                         secColor = secondaryTextColor,
                         scaleFont = ::scaleFont

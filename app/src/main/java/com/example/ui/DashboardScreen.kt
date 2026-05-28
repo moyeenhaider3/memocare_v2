@@ -613,7 +613,7 @@ fun DashboardScreen(
                             )
                             Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "Learn how to chain multi-step medical alerts & explore real caregiver scenarios.",
+                                text = "Learn how to connect steps in order and check out real-life helpful examples.",
                                 fontSize = scaleFont(11).sp,
                                 color = Color.Gray,
                                 lineHeight = 14.sp
@@ -704,7 +704,7 @@ fun DashboardScreen(
                                         color = Color(0xFF5D4037)
                                     )
                                     Text(
-                                        "Unlock unlimited chained sequences, complete compliance logging, & absolute full-screen alert takeovers. Try 30-day free trial risk-free.",
+                                        "Unlock unlimited family helper updates, detailed history logs, and reliable full-screen alerts. Try the 30-day free trial today!",
                                         fontSize = scaleFont(11).sp,
                                         color = Color(0xFF795548),
                                         lineHeight = 15.sp

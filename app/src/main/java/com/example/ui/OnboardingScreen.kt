@@ -122,16 +122,16 @@ fun OnboardingScreen(
                 ) { slide ->
                     when (slide) {
                         1 -> OnboardingSlideInfo(
-                            title = "Smart Reminders\nThat Understand You",
-                            description = "Unlike normal chaotic alarm apps, MemoCare understands the relationship between tasks - connecting medications to your meal times dynamically.",
+                            title = "Smart Reminders\nMade Simple",
+                            description = "Unlike normal chaotic alarm apps, MemoCare connects your health tasks directly to events like checking in or having breakfast.",
                             icon = Icons.Default.Hub,
                             scaleFont = ::scaleFont,
                             primaryColor = primaryColor,
                             accentColor = accentColor
                         )
                         2 -> OnboardingSlideInfo(
-                            title = "Connected Reminder Chains",
-                            description = "Define a mealtime, and MemoCare schedules satellite reminders (Paracetamol before, syrup after). Once you tap DONE, subsequent alerts lock in automatically.",
+                            title = "Step-By-Step Task Alarms",
+                            description = "Set up your medication or daily tasks in a specific order. Once you mark a task as DONE, your next reminder is scheduled automatically.",
                             icon = Icons.Default.Link,
                             scaleFont = ::scaleFont,
                             primaryColor = primaryColor,
@@ -145,42 +145,56 @@ fun OnboardingScreen(
                                 .verticalScroll(rememberScrollState())
                         ) {
                             Text(
-                                "Choose Accessibility Level",
+                                "Choose Reading Size",
                                 fontSize = scaleFont(22).sp,
                                 fontWeight = FontWeight.Bold,
                                 color = primaryColor,
                                 textAlign = TextAlign.Center
                             )
                             Text(
-                                "MemoCare is designed with high contrast and huge fonts to make reading clean for everyone.",
+                                "MemoCare has easy-to-read big text so it is simple to find what you need.",
                                 fontSize = scaleFont(14).sp,
                                 color = Color.Gray,
                                 textAlign = TextAlign.Center
                             )
 
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(12.dp))
 
-                            // Text Size Buttons
-                            Text("Text Size Preferences", fontSize = scaleFont(14).sp, fontWeight = FontWeight.Bold, color = primaryColor)
-                            Row(
+                            // Text Size Buttons vertically stacked to prevent breaking/wrapping into two lines
+                            Text("How large should text be?", fontSize = scaleFont(15).sp, fontWeight = FontWeight.Bold, color = primaryColor)
+                            Column(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 listOf("Medium", "Large", "Extra Large").forEach { size ->
                                     val isSel = textSizePref == size
+                                    val labelText = when (size) {
+                                        "Medium" -> "Normal Size (Standard)"
+                                        "Large" -> "Large Size (Bigger Text)"
+                                        "Extra Large" -> "Huge Size (Maximum Visibility)"
+                                        else -> size
+                                    }
                                     Button(
                                         onClick = { onTextSizeChange(size) },
-                                        modifier = Modifier.weight(1f),
+                                        modifier = Modifier.fillMaxWidth().height(46.dp),
                                         colors = ButtonDefaults.buttonColors(
-                                            containerColor = if (isSel) accentColor else Color.LightGray
-                                        )
+                                            containerColor = if (isSel) accentColor else Color.LightGray.copy(alpha = 0.5f)
+                                        ),
+                                        shape = RoundedCornerShape(8.dp)
                                     ) {
-                                        Text(size, fontSize = 11.sp, color = if (isSel) Color.White else Color.Black)
+                                        Text(
+                                            text = labelText,
+                                            fontSize = 12.sp,
+                                            color = if (isSel) Color.White else Color.Black,
+                                            maxLines = 1,
+                                            fontWeight = FontWeight.Bold
+                                        )
                                     }
                                 }
                             }
 
-                            Spacer(modifier = Modifier.height(16.dp))
+                            Spacer(modifier = Modifier.height(12.dp))
 
                             // High Contrast switch
                             Row(
@@ -188,7 +202,7 @@ fun OnboardingScreen(
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text("High Contrast Colors", fontSize = scaleFont(14).sp, fontWeight = FontWeight.Bold, color = primaryColor)
+                                Text("High Contrast Black Text", fontSize = scaleFont(14).sp, fontWeight = FontWeight.Bold, color = primaryColor)
                                 Switch(
                                     checked = highContrastPref,
                                     onCheckedChange = onHighContrastChange
@@ -207,16 +221,16 @@ fun OnboardingScreen(
                                 contentDescription = null,
                                 tint = accentColor,
                                 modifier = Modifier.size(56.dp)
-                            )
+                              )
                             Text(
-                                "Add a Family Member",
+                                "Add a Family Helper",
                                 fontSize = scaleFont(20).sp,
                                 fontWeight = FontWeight.Bold,
                                 color = primaryColor,
                                 textAlign = TextAlign.Center
                             )
                             Text(
-                                "Skip reminders safely. When you skip, we help prepare a WhatsApp message for your caregiver.",
+                                "If you ever skip a medicine, MemoCare will help prepare a quick WhatsApp update to let your helper know.",
                                 fontSize = scaleFont(14).sp,
                                 color = Color.Gray,
                                 textAlign = TextAlign.Center
@@ -225,7 +239,7 @@ fun OnboardingScreen(
                             OutlinedTextField(
                                 value = nameInput,
                                 onValueChange = { nameInput = it },
-                                label = { Text("My Name") },
+                                label = { Text("My First Name") },
                                 colors = bentoTextColors,
                                 modifier = Modifier.fillMaxWidth()
                             )
@@ -233,7 +247,7 @@ fun OnboardingScreen(
                             OutlinedTextField(
                                 value = caregiverName,
                                 onValueChange = { caregiverName = it },
-                                label = { Text("Caregiver Name (e.g. Son)") },
+                                label = { Text("Helper's Name (e.g. Son, Daughter)") },
                                 colors = bentoTextColors,
                                 modifier = Modifier.fillMaxWidth()
                             )
@@ -241,14 +255,14 @@ fun OnboardingScreen(
                             OutlinedTextField(
                                 value = caregiverWhatsBy,
                                 onValueChange = { caregiverWhatsBy = it },
-                                label = { Text("Caregiver WhatsApp (Country code)") },
+                                label = { Text("Helper's WhatsApp Mobile Number") },
                                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                                 colors = bentoTextColors,
                                 modifier = Modifier.fillMaxWidth()
                             )
 
                             Text(
-                                "Your numbers remain 100% offline. We never send messages automatically.",
+                                "Your numbers stay 100% private on your own phone. We never send updates without you tapping send.",
                                 fontSize = scaleFont(12).sp,
                                 color = Color.Gray,
                                 modifier = Modifier.padding(horizontal = 4.dp),

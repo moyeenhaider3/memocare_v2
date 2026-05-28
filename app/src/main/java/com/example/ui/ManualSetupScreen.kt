@@ -198,7 +198,7 @@ fun ManualSetupScreen(
                                 }
                                 
                                 launch(Dispatchers.Main) {
-                                    Toast.makeText(context, "Reminder synced successfully!", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, "Reminder saved successfully!", Toast.LENGTH_SHORT).show()
                                     onNavigateBack()
                                 }
                             }
@@ -213,7 +213,7 @@ fun ManualSetupScreen(
                         shape = RoundedCornerShape(12.dp)
                     ) {
                         Text(
-                            if (editingReminderId == null) "SAVE LINK" else "UPDATE LINK",
+                            if (editingReminderId == null) "SAVE REMINDER" else "UPDATE REMINDER",
                             fontSize = scaleFont(14).sp,
                             fontWeight = FontWeight.Bold
                         )
@@ -381,10 +381,10 @@ fun ManualSetupScreen(
             }
 
             // Field 3: Routine Anchor Link
-            Text("Link to Daily Food/Sleep Routine?", fontSize = scaleFont(14).sp, fontWeight = FontWeight.Bold, color = primaryColor)
+            Text("Link to Daily Routine?", fontSize = scaleFont(14).sp, fontWeight = FontWeight.Bold, color = primaryColor)
             Box {
                 OutlinedTextField(
-                    value = if (anchorEvent == "None") "No Anchor (Hard Fixed Time)" else "Chained to $anchorEvent",
+                    value = if (anchorEvent == "None") "Independent (Specific Clock Time)" else "Linked to $anchorEvent routine",
                     onValueChange = {},
                     readOnly = true,
                     colors = bentoTextColors,
@@ -402,12 +402,12 @@ fun ManualSetupScreen(
                 )
                 DropdownMenu(expanded = anchorExpanded, onDismissRequest = { anchorExpanded = false }) {
                     val anchors = listOf(
-                        "None" to "Fixed Static Time",
-                        "WakeUp" to "Wake Up Routine",
-                        "Breakfast" to "Breakfast Routine",
-                        "Lunch" to "Lunch Routine",
-                        "Dinner" to "Dinner Routine",
-                        "Sleep" to "Sleep Routine"
+                        "None" to "Independent (Specific Clock Time)",
+                        "WakeUp" to "Waking Up Time",
+                        "Breakfast" to "Breakfast Time",
+                        "Lunch" to "Lunch Time",
+                        "Dinner" to "Dinner Time",
+                        "Sleep" to "Bedtime"
                     )
                     anchors.forEach { (key, label) ->
                         DropdownMenuItem(
@@ -433,17 +433,21 @@ fun ManualSetupScreen(
                     OutlinedTextField(
                         value = offsetMinutes,
                         onValueChange = { offsetMinutes = it },
-                        label = { Text("Time gap (minutes)") },
+                        label = { Text("How many minutes?") },
                         colors = bentoTextColors,
                         modifier = Modifier.weight(1f)
                     )
 
                     Box(modifier = Modifier.weight(1f)) {
                         OutlinedTextField(
-                            value = direction,
+                            value = when (direction) {
+                                "Before" -> "Before routine"
+                                "After" -> "After routine"
+                                else -> "Exactly at routine"
+                            },
                             onValueChange = {},
                             readOnly = true,
-                            label = { Text("Direction") },
+                            label = { Text("Timing") },
                             colors = bentoTextColors,
                             trailingIcon = {
                                 IconButton(onClick = { directionExpanded = true }) {
@@ -458,12 +462,16 @@ fun ManualSetupScreen(
                                 .clickable { directionExpanded = true }
                         )
                         DropdownMenu(expanded = directionExpanded, onDismissRequest = { directionExpanded = false }) {
-                            val options = listOf("Before", "After", "Fixed")
-                            options.forEach { opt ->
+                            val options = listOf(
+                                "Before" to "Before routine",
+                                "After" to "After routine",
+                                "Fixed" to "Exactly at routine"
+                            )
+                            options.forEach { (key, label) ->
                                 DropdownMenuItem(
-                                    text = { Text(opt) },
+                                    text = { Text(label) },
                                     onClick = {
-                                        direction = opt
+                                        direction = key
                                         directionExpanded = false
                                     }
                                 )
@@ -477,7 +485,7 @@ fun ManualSetupScreen(
                         value = anchorTime,
                         onValueChange = {},
                         readOnly = true,
-                        label = { Text("Static Alarm Time (Tap to select clock)") },
+                        label = { Text("Select alarm clock time (Tap to select)") },
                         colors = bentoTextColors,
                         trailingIcon = {
                             Icon(
@@ -500,11 +508,11 @@ fun ManualSetupScreen(
                 }
             }
 
-            Divider()
+            HorizontalDivider()
 
             // Field 4: Connected Reminder Chain mapping (DAG)
-            Text("Chained Step Connection (Advanced Flow)", fontSize = scaleFont(14).sp, fontWeight = FontWeight.Bold, color = primaryColor)
-            Text("Does this alarm depend on another medication complete confirmation first?", fontSize = scaleFont(11).sp, color = Color.Gray)
+            Text("Step-by-Step Task Ordering", fontSize = scaleFont(14).sp, fontWeight = FontWeight.Bold, color = primaryColor)
+            Text("Should this task wait until you mark another medicine as finished first?", fontSize = scaleFont(11).sp, color = Color.Gray)
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -512,7 +520,7 @@ fun ManualSetupScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = if (isChainStart) "Independent Starting Node" else "Connected Node (Waiting for parent)",
+                    text = if (isChainStart) "Starts by itself (Independent)" else "Waits for another task (Linked)",
                     fontSize = scaleFont(12).sp,
                     fontWeight = FontWeight.SemiBold
                 )
@@ -526,7 +534,7 @@ fun ManualSetupScreen(
                 val availableParents = allReminders.filter { it.id != editingReminderId }
                 Box {
                     OutlinedTextField(
-                        value = availableParents.find { it.id == parentId }?.name ?: "Select Parent Medicine",
+                        value = availableParents.find { it.id == parentId }?.name ?: "Tap to choose which task to wait for",
                         onValueChange = {},
                         readOnly = true,
                         colors = bentoTextColors,
